@@ -119,9 +119,9 @@ def submit(request, course_id):
             submission = Submission.objects.create(enrollment=enrollment)
             submitted_anwsers = extract_answers(request)
             for answer in submitted_anwsers:
-                submission.choices.append(answer)
+                submission.choices.add(answer)
             submission.save()
-            return HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_result', args=(submission.id)))
+            return HttpResponseRedirect(reverse(viewname='onlinecourse:show_exam_result', args=(course_id,submission.id)))
         else:
             return HttpResponseRedirect(reverse(viewname='onlinecourse:course_details', args=(course_id,)))
     else:
@@ -147,21 +147,22 @@ def extract_answers(request):
 def show_exam_result(request, course_id, submission_id):
     course = Course.objects.get(pk=course_id)
     submission = Submission.objects.get(pk=submission_id)
+    context = {}
     if course is not None and submission is not None:
         total_score = 0
         total_score_obtained = 0
-        choices = submission.choice_set.all():
-        for lesson in course.lesson_set.all():
-            for question in lesson.question_set.all():
-                total_score = total_score + question.question_grade
-                if question.is_get_score(choices)
-                    total_score_obtained = total_score_obtained + question.question_grade
+        choices = submission.choices.all()
+        for question in course.question_set.all():
+            total_score = total_score + question.question_grade
+            if question.is_get_score(choices):
+                total_score_obtained = total_score_obtained + question.question_grade
         context["course"] = course
         context["selected_ids"] = choices
         context["grade"] = total_score_obtained
         context["maxgrade"] = total_score
+        context["gradepercent"] = total_score_obtained / total_score
         return render(request, 'onlinecourse/exam_result_bootstrap.html', context=context)
-    else
+    else:
         return HttpResponseRedirect(reverse(viewname='onlinecourse:course_list'))
 
 
