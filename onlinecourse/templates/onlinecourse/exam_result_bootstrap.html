@@ -34,7 +34,6 @@
         </ul>
     </div>
 </nav>
-
 <div class="container-fluid">
     {% if gradepercent > 0.8 %}
     <div class="alert alert-success">
@@ -56,7 +55,7 @@
                         <div class="card-body">
                             {% for choice in question.choice_set.all %}
                                 {% if choice.id in selected_ids and choice.is_correct %}
-                                    <span class="green">Correct answer: {{ choice.choice_content }}</span><br>
+                                    <span class="text-success">Correct answer: {{ choice.choice_content }}</span><br>
                                 {% else %}
                                     {{ choice.choice_content }}<br>
                                 {% endif %}

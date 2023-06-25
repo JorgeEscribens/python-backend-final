@@ -152,12 +152,15 @@ def show_exam_result(request, course_id, submission_id):
         total_score = 0
         total_score_obtained = 0
         choices = submission.choices.all()
+        selected_ids = []
+        for choice in choices:
+            selected_ids.append(choice.id)
         for question in course.question_set.all():
             total_score = total_score + question.question_grade
             if question.is_get_score(choices):
                 total_score_obtained = total_score_obtained + question.question_grade
         context["course"] = course
-        context["selected_ids"] = choices
+        context["selected_ids"] = selected_ids
         context["grade"] = total_score_obtained
         context["maxgrade"] = total_score
         context["gradepercent"] = total_score_obtained / total_score
